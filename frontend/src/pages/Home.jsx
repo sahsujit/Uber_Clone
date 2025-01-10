@@ -10,7 +10,7 @@ const Home = () => {
           <h2 className='text-3xl font-bold'>
             Get Started With Uber
           </h2>
-          <Link to={"/login"} className='w-full flex justify-center items-center bg-black py-3 text-white rounded mt-5'>
+          <Link to={"/user-login"} className='w-full flex justify-center items-center bg-black py-3 text-white rounded mt-5'>
             Continue
           </Link>
          </div>
