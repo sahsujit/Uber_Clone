@@ -1,11 +1,42 @@
-import React from "react";
+import React, { useRef, useState } from "react";
+import { useGSAP} from "@gsap/react"
+import  gsap  from "gsap";
+import 'remixicon/fonts/remixicon.css'
+
 
 const Home = () => {
+
+  const [ pickup, setPickup ] = useState('')
+  const [ destination, setDestination ] = useState('')
+  const [ panelOpen, setPanelOpen ] = useState(false)
+  const panelRef = useRef(null)
+  const panelCloseRef = useRef(null)
 
   const submitHandler = (e) => {
     e.preventDefault();
     console.log("submit");
   };
+
+  useGSAP(function(){
+   if(panelOpen){
+    gsap.to(panelRef.current,{
+      height:"70%"
+    })
+    gsap.to(panelCloseRef.current, {
+      opacity: 1
+  })
+
+
+    
+   }else{
+    gsap.to(panelRef.current,{
+      height:"0%"
+    })
+    gsap.to(panelCloseRef.current, {
+      opacity: 0
+  })
+   }
+  },[panelOpen])
 
   const findTrip = () => {}
 
@@ -29,8 +60,8 @@ const Home = () => {
 
       <div className=' flex flex-col justify-end h-screen absolute top-0 w-full'>
                 <div className='h-[30%] p-6 bg-white relative'>
-                    <h5  onClick={() => {
-                        // setPanelOpen(false)
+                    <h5 ref={panelCloseRef} onClick={() => {
+                        setPanelOpen(false)
                     }} className='absolute opacity-0 right-6 top-6 text-2xl'>
                         <i className="ri-arrow-down-wide-line"></i>
                     </h5>
@@ -41,10 +72,13 @@ const Home = () => {
                         <div className="line absolute h-16 w-1 top-[50%] -translate-y-1/2 left-5 bg-gray-700 rounded-full"></div>
                         <input
                             onClick={() => {
-                                // setPanelOpen(true)
+                                setPanelOpen(true)
                                 // setActiveField('pickup')
                             }}
-                            // value={pickup}
+                            value={pickup}
+                            onChange={(e)=>{
+                              setPickup(e.target.value)
+                            }}
                             // onChange={handlePickupChange}
                             className='bg-[#eee] px-12 py-2 text-lg rounded-lg w-full'
                             type="text"
@@ -52,10 +86,13 @@ const Home = () => {
                         />
                         <input
                             onClick={() => {
-                                // setPanelOpen(true)
+                                setPanelOpen(true)
                                 // setActiveField('destination')
                             }}
-                            // value={destination}
+                            value={destination}
+                            onChange={(e)=>{
+                              setDestination(e.target.value)
+                            }}
                             // onChange={handleDestinationChange}
                             className='bg-[#eee] px-12 py-2 text-lg rounded-lg w-full  mt-3'
                             type="text"
@@ -66,6 +103,10 @@ const Home = () => {
                         className='bg-black text-white px-4 py-2 rounded-lg mt-3 w-full'>
                         Find Trip
                     </button>
+                </div>
+
+                <div ref={panelRef} className="h-[70%] bg-red-500 ">
+
                 </div>
                 
             </div>
