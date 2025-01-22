@@ -56,8 +56,8 @@ module.exports.loginCaptain = async(req, res, next)=>{
     return res.status(200).json({token, captain})
 }
 
-module.exports.getProfile = async(req, res, next) =>{
-    res.status(200).json({captain:req.captain})
+module.exports.getCaptainProfile = async (req, res, next) => {
+    res.status(200).json({ captain: req.captain });
 }
 
 module.exports.logoutCaptain = async(req, res, next) =>{

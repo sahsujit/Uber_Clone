@@ -21,7 +21,9 @@ const CaptainLogin = () => {
       password
     }
     const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/login`, captain)
+    console.log(res)
     if (res.status === 200) {
+      
       const data = res.data
       setCaptain(data.captain)
      navigate('/captain-home')
