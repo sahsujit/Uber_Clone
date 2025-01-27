@@ -11,6 +11,8 @@ const Home = () => {
   const [panelOpen, setPanelOpen] = useState(false);
   const panelRef = useRef(null);
   const panelCloseRef = useRef(null);
+  const vehiclePanelRef = useRef(null);
+  const [vehiclePanel, setVehiclePanel] = useState(false);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -40,6 +42,17 @@ const Home = () => {
     [panelOpen]
   );
 
+  useGSAP(()=>{
+    if(vehiclePanel){
+      gsap.to(vehiclePanelRef.current,{
+        transform:'translateY(0)'
+      })
+    }else{
+      gsap.to(vehiclePanelRef.current,{
+        transform:'translateY(100%)'})
+    }
+  },[vehiclePanel])
+
   const findTrip = () => {};
 
   return (
@@ -49,7 +62,7 @@ const Home = () => {
         src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"
         alt=""
       />
-      <div className="h-screen w-screen">
+      <div onClick={()=>setVehiclePanel(false)} className="h-screen w-screen">
         <img
           className="w-full h-full object-cover"
           src="https://miro.medium.com/v2/resize:fit:1400/0*gwMx05pqII5hbfmX.gif"
@@ -114,11 +127,13 @@ const Home = () => {
         </div>
 
         <div ref={panelRef} className="h-0 bg-white ">
-          <LocationSearchPanel />
+          <LocationSearchPanel 
+         setPanelOpen={setPanelOpen} setVehiclePanel={setVehiclePanel}
+          />
         </div>
       </div>
-      <div  className='fixed w-full z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12'>
-        <VehiclePanel/>
+      <div ref={vehiclePanelRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12'>
+        <VehiclePanel />
 
       </div>
     </div>
