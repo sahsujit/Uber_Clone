@@ -12,6 +12,31 @@ const CaptainHome = () => {
   const ridePopupPanelRef = useRef(null)
   const confirmRidePopupPanelRef = useRef(null)
   const [ ride, setRide ] = useState(null)
+
+  useGSAP(function () {
+    if (ridePopupPanel) {
+        gsap.to(ridePopupPanelRef.current, {
+            transform: 'translateY(0)'
+        })
+    } else {
+        gsap.to(ridePopupPanelRef.current, {
+            transform: 'translateY(100%)'
+        })
+    }
+}, [ ridePopupPanel ])
+
+useGSAP(function () {
+    if (confirmRidePopupPanel) {
+        gsap.to(confirmRidePopupPanelRef.current, {
+            transform: 'translateY(0)'
+        })
+    } else {
+        gsap.to(confirmRidePopupPanelRef.current, {
+            transform: 'translateY(100%)'
+        })
+    }
+}, [ confirmRidePopupPanel ])
+
   return (
     <div className="h-screen">
       <div className="fixed p-6 top-0 flex items-center justify-between w-screen">
