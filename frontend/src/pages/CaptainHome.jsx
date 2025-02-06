@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import CaptainDetails from "../components/CaptainDetails";
 import RidePopUp from "../components/RidePopUp";
 import ConfirmRidePopUp from "../components/ConfirmRidePopUp";
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
 
 const CaptainHome = () => {
 
