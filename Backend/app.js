@@ -7,6 +7,7 @@ const  userRoute = require("./routes/user.route")
 const captainRoute = require("./routes/captain.route")
 const cookieParser = require("cookie-parser")
 const mapsRoute = require("./routes/map.routes")
+const rideRoute = require("./routes/ride.route")
 
 connectToDB();
 
@@ -23,6 +24,7 @@ app.get("/", (req, res)=>{
 app.use("/users", userRoute)
 app.use("/captains", captainRoute)
 app.use("/maps", mapsRoute)
+app.use("/rides", rideRoute)
 
 
 
