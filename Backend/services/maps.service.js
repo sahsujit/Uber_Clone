@@ -21,49 +21,87 @@ module.exports.getAddressCoordinate = async (address) => {
 }
 
 
-const geocode = async (place) => {
-    const apiKey = process.env.HERE_MAPS_API; // Ensure your HERE API Key is in the environment variables
-    const url = `https://geocode.search.hereapi.com/v1/geocode?q=${encodeURIComponent(place)}&apiKey=${apiKey}`;
 
-    try {
-        const response = await axios.get(url);
-        const location = response.data.items[0];  // Get the first result
 
-        if (location) {
-            return {
-                lat: location.position.lat,
-                lng: location.position.lng
-            };
-        } else {
-            throw new Error(`Unable to geocode the place: ${place}`);
-        }
-    } catch (err) {
-        console.error('Geocoding error:', err.message);
-        throw err;
-    }
-};
 
 module.exports.getDistanceTime = async (origin, destination) => {
     if (!origin || !destination) {
         throw new Error('Origin and destination are required');
     }
 
-    try {
-        // Get the coordinates for both origin and destination
-        const originCoordinates = await geocode(origin);
-        const destinationCoordinates = await geocode(destination);
+    const apiKey = process.env.ORS_API_KEY;
 
-        if (!originCoordinates || !destinationCoordinates) {
-            throw new Error('Unable to get coordinates for one or both places.');
+    const getCoords = async (place) => {
+        const response = await axios.get(`https://nominatim.openstreetmap.org/search`, {
+            params: {
+                q: place,
+                format: 'json',
+                limit: 1
+            },
+            headers: {
+                'User-Agent': 'uber-clone/1.0'
+            }
+        });
+
+        if (!response.data || response.data.length === 0) {
+            throw new Error(`Location not found: ${place}`);
         }
 
-        // Now call the existing getDistanceTime with the coordinates
-        return (
-            `${originCoordinates.lat},${originCoordinates.lng}`, 
-            `${destinationCoordinates.lat},${destinationCoordinates.lng}`
-        );
+        const { lat, lon } = response.data[0];
+        return [parseFloat(lon), parseFloat(lat)];
+    };
+
+    const formatDistance = (meters) => {
+        return meters >= 1000
+            ? `${(meters / 1000).toFixed(1)} km`
+            : `${meters.toFixed(0)} m`;
+    };
+
+    const formatDuration = (seconds) => {
+        const hrs = Math.floor(seconds / 3600);
+        const mins = Math.floor((seconds % 3600) / 60);
+
+        if (hrs > 0) {
+            return `${hrs} hr${hrs > 1 ? 's' : ''} ${mins} min${mins !== 1 ? 's' : ''}`;
+        } else {
+            return `${mins} min${mins !== 1 ? 's' : ''}`;
+        }
+    };
+
+    try {
+        const [originCoords, destinationCoords] = await Promise.all([
+            getCoords(origin),
+            getCoords(destination)
+        ]);
+
+        const orsUrl = `https://api.openrouteservice.org/v2/matrix/driving-car`;
+
+        const matrixResponse = await axios.post(orsUrl, {
+            locations: [originCoords, destinationCoords],
+            metrics: ['distance', 'duration']
+        }, {
+            headers: {
+                'Authorization': apiKey,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const distance = matrixResponse.data.distances[0][1]; // meters
+        const duration = matrixResponse.data.durations[0][1]; // seconds
+
+        return {
+            distance: {
+                value: distance,
+                text: formatDistance(distance)
+            },
+            duration: {
+                value: duration,
+                text: formatDuration(duration)
+            }
+        };
+
     } catch (err) {
-        console.error('Error in distance and time calculation:', err.message);
+        console.error(err);
         throw err;
     }
 };
@@ -72,7 +110,33 @@ module.exports.getDistanceTime = async (origin, destination) => {
 
 
 
+module.exports.getAutoCompleteSuggestions = async (input) => {
+    if (!input) {
+        throw new Error('Input query is required');
+    }
 
+    const apiKey = process.env.ORS_API_KEY;  // Or you can use Nominatim without an API key
+
+    try {
+        // Call OpenRouteService or Nominatim's search endpoint
+        const url = `https://api.openrouteservice.org/geocode/search?text=${encodeURIComponent(input)}&boundary.country=US`;
+
+        const response = await axios.get(url, {
+            headers: {
+                'Authorization': apiKey
+            }
+        });
+
+        if (response.data.features && response.data.features.length > 0) {
+            return response.data.features.map(feature => feature.properties.label).filter(value => value);
+        } else {
+            throw new Error('No suggestions found');
+        }
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+};
 
 
 
