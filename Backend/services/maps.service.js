@@ -118,8 +118,10 @@ module.exports.getAutoCompleteSuggestions = async (input) => {
     const apiKey = process.env.ORS_API_KEY;  // Or you can use Nominatim without an API key
 
     try {
+        const url = `https://api.openrouteservice.org/geocode/search?text=${encodeURIComponent(input)}`;
+
         // Call OpenRouteService or Nominatim's search endpoint
-        const url = `https://api.openrouteservice.org/geocode/search?text=${encodeURIComponent(input)}&boundary.country=US`;
+        // const url = `https://api.openrouteservice.org/geocode/search?text=${encodeURIComponent(input)}&boundary.country=US`;
 
         const response = await axios.get(url, {
             headers: {
