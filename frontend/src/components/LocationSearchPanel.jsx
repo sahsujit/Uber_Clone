@@ -44,7 +44,7 @@ const LocationSearchPanel = ({
       setDestination(suggestion);
     }
 
-    console.log("Rendering suggestions:", suggestions);
+
     // setVehiclePanel(true)
     // setPanelOpen(false)
   };

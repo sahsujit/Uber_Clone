@@ -325,6 +325,9 @@ import VehiclePanel from "../components/VehiclePanel";
 import ConfirmRide from "../components/ConfirmRide";
 import LookingForDriver from "../components/LookingForDriver";
 import WaitingForDriver from "../components/WaitingForDriver";
+import { SocketContext } from '../context/SocketContext';
+import { useContext } from 'react';
+import { UserDataContext } from '../context/UserContext';
 
 const Home = () => {
   const [pickup, setPickup] = useState("");
@@ -348,6 +351,14 @@ const Home = () => {
   const [vehicleFound, setVehicleFound] = useState(false);
   const [waitingForDriver, setWaitingForDriver] = useState(false);
 
+
+  const { socket } = useContext(SocketContext)
+  const { user } = useContext(UserDataContext)
+
+  useEffect(() => {
+      socket.emit("join", { userType: "user", userId: user._id })
+  }, [ user ])
+
   const handlePickupChange = async (e) => {
     const value = e.target.value;
     setPickup(value);
@@ -367,7 +378,7 @@ const Home = () => {
           },
         }
       );
-      console.log("Pickup suggestions:", response.data);
+   
       setPickupSuggestions(response.data);
     } catch (err) {
       console.error("Error fetching pickup suggestions:", err);
@@ -393,7 +404,7 @@ const Home = () => {
           },
         }
       );
-      console.log("Destination suggestions:", response.data);
+    
       setDestinationSuggestions(response.data);
     } catch (err) {
       console.error("Error fetching destination suggestions:", err);
@@ -466,7 +477,7 @@ const Home = () => {
           },
         }
       );
-      console.log("Ride created:", response.data);
+     
     } catch (err) {
       console.error("Error creating ride:", err);
     }
