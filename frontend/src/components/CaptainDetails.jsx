@@ -5,7 +5,7 @@ const CaptainDetails = () => {
     const { captain } = useContext(CaptainDataContext);
     console.log(captain); // debugging log
 
-   const actualCaptain = captain?.captain || null;
+//    const captain = captain?.captain || null;
 
     return (
         <div>
@@ -17,7 +17,7 @@ const CaptainDetails = () => {
                         alt="Captain" 
                     />
                     <h4 className='text-lg font-medium capitalize'>
-                        {actualCaptain.fullname.firstname + " " + actualCaptain.fullname.lastname}
+                        {captain.fullname.firstname + " " + captain.fullname.lastname}
                     </h4>
                 </div>
                 <div>
