@@ -1,4 +1,5 @@
 const axios = require('axios');
+const captainModel = require('../model/captain.model');
 module.exports.getAddressCoordinate = async (address) => {
     const apiKey = process.env.GOOGLE_MAPS_API;
     const url = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(address)}&key=${apiKey}`;
